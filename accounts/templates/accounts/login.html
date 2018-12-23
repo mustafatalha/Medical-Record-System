@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <form method="post" action="{% url 'login' %}?next={{ next }}" class="accountform">
+        <fieldset class="form-group">
+            <legend>Login</legend>
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="btn btn-primary">Login</button>
+        </fieldset>
+    </form>
+
+ <a href="{% url 'home' %}">Back</a>
+{% endblock %}
