@@ -25,7 +25,7 @@ class Doctor(models.Model):
 
 class Patient(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patient')
-    birth_date = models.BooleanField(blank=True)
+    birth_date = models.DateField(blank=True)
 
     def __str__(self):
         return self.user.username
