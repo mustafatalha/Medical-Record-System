@@ -24,7 +24,7 @@ def login(request):
                 auth.login(request, user)
                 return redirect("/")
             else:
-                login_form.add_error(None, "Your username or password are incorrect")
+                login_form.add_error(None, "Can't login now.")
     else:
         login_form = UserLoginForm()
 
@@ -37,21 +37,18 @@ def register_doctor(request):
         doctor_form = DoctorRegistrationForm(request.POST, request.FILES)
 
         if user_form.is_valid() and doctor_form.is_valid():
-            user = user_form.save()
+            user = user_form.save(commit=False)
             user.user_type = 1
+            user.is_active = False
+            user.save()
             doctor = doctor_form.save(commit=False)
             doctor.user = user
             doctor.save()
 
             u = user_form.cleaned_data['username']
             p = user_form.cleaned_data['password1']
-            user = authenticate(username=u, password=p)
 
-            if user is not None:
-                auth.login(request, user)
-                return redirect("/")
-            else:
-                user_form.add_error(None, "Can't log in now, try later.")
+            return redirect("/")
     else:
         user_form = UserRegistrationForm()
         doctor_form = DoctorRegistrationForm()
@@ -74,13 +71,8 @@ def register_patient(request):
 
             u = user_form.cleaned_data['username']
             p = user_form.cleaned_data['password1']
-            user = authenticate(username=u, password=p)
 
-            if user is not None:
-                auth.login(request, user)
-                return redirect("/")
-            else:
-                user_form.add_error(None, "Can't log in now, try later.")
+            return redirect("/")
     else:
         user_form = UserRegistrationForm()
         patient_form = PatientRegistrationForm()
