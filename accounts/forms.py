@@ -9,11 +9,34 @@ now = datetime.datetime.now()
 
 
 class UserLoginForm(forms.Form):
-    username_or_email = forms.CharField()
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-class UserRegistrationForm(UserCreationForm):
+class MyUserCreationForm(forms.ModelForm):
+    """
+    A form that creates a user, with no privileges, from the given username and
+    password.
+    """
+
+    class Meta:
+        model = MedUser
+        fields = ("username",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self._meta.model.USERNAME_FIELD in self.fields:
+            self.fields[self._meta.model.USERNAME_FIELD].widget.attrs.update({'autofocus': True})
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+        return user
+
+
+# User Registration form for Doctor
+class UserRegistrationForm1(UserCreationForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(
         label='Password Confirmation',
@@ -22,7 +45,7 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = MedUser
-        fields = ['username', 'password1', 'password2']
+        fields = ['first_name','last_name','username', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -42,6 +65,16 @@ class UserRegistrationForm(UserCreationForm):
             raise ValidationError("Passwords do not match")
 
         return password2
+
+
+# User Registration form for Patient, Nurse and Relative
+class UserRegistrationForm2(MyUserCreationForm):
+    password1 = None
+    password2 = None
+
+    class Meta:
+        model = MedUser
+        fields = ['first_name','last_name']
 
 
 class DoctorRegistrationForm(ModelForm):

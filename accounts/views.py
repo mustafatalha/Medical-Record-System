@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
-from .forms import UserLoginForm, UserRegistrationForm, DoctorRegistrationForm, PatientRegistrationForm
+from .forms import (UserLoginForm, UserRegistrationForm1, UserRegistrationForm2,
+                    DoctorRegistrationForm, PatientRegistrationForm)
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.base_user import BaseUserManager
 
 from .decorators import doctor_login_required
 # Create your views here.
@@ -16,7 +18,7 @@ def login(request):
     if request.method == "POST":
         login_form = UserLoginForm(request.POST)
         if login_form.is_valid():
-            u = login_form.cleaned_data['username_or_email']
+            u = login_form.cleaned_data['username']
             p = login_form.cleaned_data['password']
             user = authenticate(username=u, password=p)
 
@@ -24,7 +26,7 @@ def login(request):
                 auth.login(request, user)
                 return redirect("/")
             else:
-                login_form.add_error(None, "Can't login now.")
+                login_form.add_error(None, "Login information is wrong or your account is not active.")
     else:
         login_form = UserLoginForm()
 
@@ -33,8 +35,9 @@ def login(request):
 
 def register_doctor(request):
     if request.method == "POST":
+        user_form = UserRegistrationForm1(request.POST)
         doctor_form = DoctorRegistrationForm(request.POST)
-        user_form = UserRegistrationForm(request.POST)
+
 
         if user_form.is_valid() and doctor_form.is_valid():
             user = user_form.save(commit=False)
@@ -47,10 +50,15 @@ def register_doctor(request):
 
             u = user_form.cleaned_data['username']
             p = user_form.cleaned_data['password1']
+            user = authenticate(username=u, password=p)
 
-            return redirect("/")
+            if user is not None:
+                auth.login(request, user)
+                return redirect("/")
+            else:
+                user_form.add_error(None, "Registration completed, Please contact with site admin for activation.")
     else:
-        user_form = UserRegistrationForm()
+        user_form = UserRegistrationForm1()
         doctor_form = DoctorRegistrationForm()
 
     return render(request, "accounts/register.html", {'user_form': user_form, 'user_type_form': doctor_form})
@@ -59,23 +67,25 @@ def register_doctor(request):
 @doctor_login_required
 def register_patient(request):
     if request.method == "POST":
+        user_form = UserRegistrationForm2(request.POST)
         patient_form = PatientRegistrationForm(request.POST)
-        user_form = UserRegistrationForm(request.POST)
 
         if user_form.is_valid() and patient_form.is_valid():
             user = user_form.save(commit=False)
             user.user_type = 2
+            user.username = user.first_name[0] + user.last_name
+            pwd = BaseUserManager().make_random_password()
+            user.set_password(pwd)
             user.save()
             patient = patient_form.save(commit=False)
             patient.user = user
             patient.save()
 
-            u = user_form.cleaned_data['username']
-            p = user_form.cleaned_data['password1']
-
-            return redirect("/")
+            user_form.add_error(None, "Patient registered with username = {} with random password = {}"
+                                .format(user.username,pwd))
+            # return redirect("/")
     else:
-        user_form = UserRegistrationForm()
+        user_form = UserRegistrationForm2()
         patient_form = PatientRegistrationForm()
 
     return render(request, "accounts/register.html", {'user_form': user_form, 'user_type_form': patient_form})
