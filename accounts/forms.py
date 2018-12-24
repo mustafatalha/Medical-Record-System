@@ -3,6 +3,9 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from .models import MedUser, Doctor, Patient
+import datetime
+
+now = datetime.datetime.now()
 
 
 class UserLoginForm(forms.Form):
@@ -19,7 +22,7 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = MedUser
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -48,6 +51,7 @@ class DoctorRegistrationForm(ModelForm):
 
 
 class PatientRegistrationForm(ModelForm):
+    birth_date = forms.DateField(widget=forms.SelectDateWidget(years=range(1919, now.year+1)))
     class Meta:
         model = Patient
         fields= ['birth_date']

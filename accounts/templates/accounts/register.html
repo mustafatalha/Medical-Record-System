@@ -3,7 +3,6 @@
     <form method="post" enctype = "multipart/form-data">
         
             <h2>Create a new account</h2>
-            <p>Already got an account? <a href="{% url 'login' %}">Sign In</a></p>
             {% csrf_token %}
             {{ user_form.as_p }}
             {{ user_type_form.as_p }}
