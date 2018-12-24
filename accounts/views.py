@@ -33,8 +33,8 @@ def login(request):
 
 def register_doctor(request):
     if request.method == "POST":
+        doctor_form = DoctorRegistrationForm(request.POST)
         user_form = UserRegistrationForm(request.POST)
-        doctor_form = DoctorRegistrationForm(request.POST, request.FILES)
 
         if user_form.is_valid() and doctor_form.is_valid():
             user = user_form.save(commit=False)
@@ -59,12 +59,13 @@ def register_doctor(request):
 @doctor_login_required
 def register_patient(request):
     if request.method == "POST":
+        patient_form = PatientRegistrationForm(request.POST)
         user_form = UserRegistrationForm(request.POST)
-        patient_form = PatientRegistrationForm(request.POST, request.FILES)
 
         if user_form.is_valid() and patient_form.is_valid():
-            user = user_form.save()
+            user = user_form.save(commit=False)
             user.user_type = 2
+            user.save()
             patient = patient_form.save(commit=False)
             patient.user = user
             patient.save()
