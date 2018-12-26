@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
-from .forms import (UserLoginForm, UserRegistrationForm1, UserRegistrationForm2,
-                    DoctorRegistrationForm, PatientRegistrationForm, NurseRegistrationForm)
+from .forms import (UserLoginForm, UserRegistrationForm1, UserRegistrationForm2, DoctorRegistrationForm,
+                    PatientRegistrationForm, NurseRegistrationForm, RelativeRegistrationForm)
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.base_user import BaseUserManager
 
-from .decorators import doctor_login_required
+from .decorators import doctor_login_required, patient_login_required
 from .models import MedUser
 # Create your views here.
 
@@ -119,6 +119,34 @@ def register_nurse(request):
         nurse_form = NurseRegistrationForm()
 
     return render(request, "accounts/register.html", {'user_form': user_form, 'user_type_form': nurse_form})
+
+
+@patient_login_required
+def register_relative(request):
+    if request.method == "POST":
+        user_form = UserRegistrationForm2(request.POST)
+        relative_form = RelativeRegistrationForm(request.POST)
+
+        if user_form.is_valid() and relative_form.is_valid():
+            user = user_form.save(commit=False)
+            user.user_type = 4
+            user.username = user.first_name[0] + user.last_name
+            pwd = BaseUserManager().make_random_password()
+            user.set_password(pwd)
+            user.save()
+            relative = relative_form.save(commit=False)
+            relative.user = user
+            relative.creator = MedUser.objects.get(username = request.user)
+            relative.save()
+
+            user_form.add_error(None, "Relative registered with username = {} with random password = {}"
+                                .format(user.username,pwd))
+            # return redirect("/")
+    else:
+        user_form = UserRegistrationForm2()
+        relative_form = NurseRegistrationForm()
+
+    return render(request, "accounts/register.html", {'user_form': user_form, 'user_type_form': relative_form})
 
 
 def logout(request):

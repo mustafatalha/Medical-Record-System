@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Doctor, Patient, MedUser, Nurse
+from .models import Doctor, Patient, MedUser, Nurse, Relative
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
@@ -7,4 +7,5 @@ from django.contrib.auth.admin import UserAdmin
 admin.site.register(Doctor)
 admin.site.register(Patient)
 admin.site.register(Nurse)
+admin.site.register(Relative)
 admin.site.register(MedUser,UserAdmin)

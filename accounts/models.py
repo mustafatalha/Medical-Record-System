@@ -37,3 +37,11 @@ class Nurse(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Relative(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='relative')
+    creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='relative_creator')
+
+    def __str__(self):
+        return self.user.username
