@@ -24,8 +24,16 @@ class Doctor(models.Model):
 
 class Patient(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patient')
-    creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='creator')
+    creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='patient_creator')
     birth_date = models.DateField(blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+class Nurse(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='nurse')
+    creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='nurse_creator')
 
     def __str__(self):
         return self.user.username

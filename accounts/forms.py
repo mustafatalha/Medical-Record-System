@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from .models import MedUser, Doctor, Patient
+from .models import MedUser, Doctor, Patient, Nurse
 import datetime
 
 now = datetime.datetime.now()
@@ -88,3 +88,9 @@ class PatientRegistrationForm(ModelForm):
     class Meta:
         model = Patient
         fields= ['birth_date']
+
+
+class NurseRegistrationForm(ModelForm):
+    class Meta:
+        model = Nurse
+        fields= []
