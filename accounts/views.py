@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.base_user import BaseUserManager
 
 from .decorators import doctor_login_required
+from .models import MedUser
 # Create your views here.
 
 
@@ -79,6 +80,7 @@ def register_patient(request):
             user.save()
             patient = patient_form.save(commit=False)
             patient.user = user
+            patient.creator = MedUser.objects.get(username = request.user)
             patient.save()
 
             user_form.add_error(None, "Patient registered with username = {} with random password = {}"
