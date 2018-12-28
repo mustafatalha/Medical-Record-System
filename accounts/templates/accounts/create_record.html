@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="post" enctype = "multipart/form-data">
+
+            <h2>Create a new record</h2>
+            {% csrf_token %}
+            {{ record_form.as_p }}
+            <button type="submit" class="btn btn-primary">Create record</button>
+
+    </form>
+
+<a href="{% url 'home' %}">Back</a>
+{% endblock %}

@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
 from .forms import (UserLoginForm, UserRegistrationForm1, UserRegistrationForm2, DoctorRegistrationForm,
-                    PatientRegistrationForm, NurseRegistrationForm, RelativeRegistrationForm)
+                    PatientRegistrationForm, NurseRegistrationForm, RelativeRegistrationForm, RecordCreationForm)
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.base_user import BaseUserManager
 
 from .decorators import doctor_login_required, patient_login_required
-from .models import MedUser
+from .models import MedUser,Patient
 # Create your views here.
 
 
@@ -157,3 +157,28 @@ def logout(request):
 @login_required(login_url="/accounts/login")
 def profile(request):
     return render(request, "accounts/profile.html")
+
+
+@doctor_login_required
+def create_record(request):
+    if request.method == 'POST':
+        record_form = RecordCreationForm(request.POST)
+
+        if record_form.is_valid():
+            record = record_form.save(commit=False)
+            pat = MedUser.objects.get(username=record_form.cleaned_data['patient_username'])
+            record.patient = pat
+            record.first_name = pat.first_name
+            record.last_name = pat.last_name
+            record.birth_date = Patient.objects.get(user=pat).birth_date
+            record.creator = MedUser.objects.get(username=request.user)
+            record.save()
+            record.allowed_users.add(pat)
+            record.allowed_users.add(MedUser.objects.get(username=request.user))
+            record.save()
+
+            return redirect("/") # TODO Burada record detay sayfasına yönlendirme olacak
+    else:
+        record_form = RecordCreationForm(request.POST)
+
+    return render(request, "accounts/create_record.html", {'record_form': record_form})

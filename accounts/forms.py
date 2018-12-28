@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from .models import MedUser, Doctor, Patient, Nurse, Relative
+from .models import MedUser, Doctor, Patient, Nurse, Relative, Record
 import datetime
 
 now = datetime.datetime.now()
@@ -45,7 +45,7 @@ class UserRegistrationForm1(UserCreationForm):
 
     class Meta:
         model = MedUser
-        fields = ['first_name','last_name','username', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'username', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -74,7 +74,7 @@ class UserRegistrationForm2(MyUserCreationForm):
 
     class Meta:
         model = MedUser
-        fields = ['first_name','last_name']
+        fields = ['first_name', 'last_name']
 
 
 class DoctorRegistrationForm(ModelForm):
@@ -85,18 +85,28 @@ class DoctorRegistrationForm(ModelForm):
 
 class PatientRegistrationForm(ModelForm):
     birth_date = forms.DateField(widget=forms.SelectDateWidget(years=range(1919, now.year+1)))
+
     class Meta:
         model = Patient
-        fields= ['birth_date']
+        fields = ['birth_date']
 
 
 class NurseRegistrationForm(ModelForm):
     class Meta:
         model = Nurse
-        fields= []
+        fields = []
 
 
 class RelativeRegistrationForm(ModelForm):
     class Meta:
         model = Relative
-        fields= []
+        fields = []
+
+
+class RecordCreationForm(ModelForm):
+    patient_username = forms.CharField(max_length=150)
+    diagnostics = forms.CharField(max_length=256)
+
+    class Meta:
+        model = Record
+        fields = ['patient_username', 'diagnostics']
