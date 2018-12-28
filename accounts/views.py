@@ -6,7 +6,6 @@ from .forms import (UserLoginForm, UserRegistrationForm1, UserRegistrationForm2,
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.base_user import BaseUserManager
-
 from .decorators import doctor_login_required, patient_login_required, doctor_or_patient_login_required
 from .models import MedUser, Patient, Record
 # Create your views here.
@@ -74,7 +73,11 @@ def register_patient(request):
         if user_form.is_valid() and patient_form.is_valid():
             user = user_form.save(commit=False)
             user.user_type = 2
-            user.username = user.first_name[0] + user.last_name
+            usrn = user.first_name[0] + user.last_name
+            i=1
+            while MedUser.objects.filter(username=usrn).exists():
+                usrn = usrn + str(i)
+            user.username = usrn
             pwd = BaseUserManager().make_random_password()
             user.set_password(pwd)
             user.save()
@@ -85,7 +88,6 @@ def register_patient(request):
 
             user_form.add_error(None, "Patient registered with username = {} with random password = {}"
                                 .format(user.username,pwd))
-            # return redirect("/")
     else:
         user_form = UserRegistrationForm2()
         patient_form = PatientRegistrationForm()
@@ -102,7 +104,11 @@ def register_nurse(request):
         if user_form.is_valid() and nurse_form.is_valid():
             user = user_form.save(commit=False)
             user.user_type = 3
-            user.username = user.first_name[0] + user.last_name
+            usrn = user.first_name[0] + user.last_name
+            i = 1
+            while MedUser.objects.filter(username=usrn).exists():
+                usrn = usrn + str(i)
+            user.username = usrn
             pwd = BaseUserManager().make_random_password()
             user.set_password(pwd)
             user.save()
@@ -113,7 +119,6 @@ def register_nurse(request):
 
             user_form.add_error(None, "Nurse registered with username = {} with random password = {}"
                                 .format(user.username,pwd))
-            # return redirect("/")
     else:
         user_form = UserRegistrationForm2()
         nurse_form = NurseRegistrationForm()
@@ -130,7 +135,11 @@ def register_relative(request):
         if user_form.is_valid() and relative_form.is_valid():
             user = user_form.save(commit=False)
             user.user_type = 4
-            user.username = user.first_name[0] + user.last_name
+            usrn = user.first_name[0] + user.last_name
+            i = 1
+            while MedUser.objects.filter(username=usrn).exists():
+                usrn = usrn + str(i)
+            user.username = usrn
             pwd = BaseUserManager().make_random_password()
             user.set_password(pwd)
             user.save()
@@ -141,7 +150,6 @@ def register_relative(request):
 
             user_form.add_error(None, "Relative registered with username = {} with random password = {}"
                                 .format(user.username,pwd))
-            # return redirect("/")
     else:
         user_form = UserRegistrationForm2()
         relative_form = NurseRegistrationForm()
@@ -212,7 +220,7 @@ def record_authenticate(request,pk):
             if auth_form.is_valid():
                 u = auth_form.cleaned_data['username']
 
-                user = MedUser.objects.get(username=u)
+                user = MedUser.objects.get(username=u) #TODO olmayan bir isim girilmesi durumu
 
                 if user is not None and user.user_type == 3:
                     record.allowed_users.add(user)
@@ -231,7 +239,7 @@ def record_authenticate(request,pk):
                     record.allowed_users.add(user)
                     return redirect("/accounts/record/{id}".format(id=pk))
                 else:
-                    auth_form.add_error(None, "Doctor or Relatives does not exist.")
+                    auth_form.add_error(None, "Doctor or Relative do not exist.")
     else:
         auth_form = RecordAuthenticationForm()
 

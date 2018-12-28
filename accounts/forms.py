@@ -47,13 +47,6 @@ class UserRegistrationForm1(UserCreationForm):
         model = MedUser
         fields = ['first_name', 'last_name', 'username', 'password1', 'password2']
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        username = self.cleaned_data.get('username')
-        if MedUser.objects.filter(email=email).exclude(username=username):
-            raise forms.ValidationError('Email addresses must be unique.')
-        return email
-
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
