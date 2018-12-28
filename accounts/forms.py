@@ -110,3 +110,7 @@ class RecordCreationForm(ModelForm):
     class Meta:
         model = Record
         fields = ['patient_username', 'diagnostics']
+
+
+class RecordAuthenticationForm(forms.Form):
+    username = forms.CharField()

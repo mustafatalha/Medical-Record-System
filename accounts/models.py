@@ -22,7 +22,7 @@ class Doctor(models.Model):
         return self.user.username
 
 
-class Patient(models.Model):
+class Patient(models.Model): # TODO username conflict çöz
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patient')
     creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='patients')
     birth_date = models.DateField(blank=True)
@@ -31,7 +31,7 @@ class Patient(models.Model):
         return self.user.username
 
 
-class Nurse(models.Model):
+class Nurse(models.Model): # TODO Hemşire ile doktoru bağla
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='nurse')
     creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='nurses')
 

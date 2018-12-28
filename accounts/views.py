@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate
 from .forms import (UserLoginForm, UserRegistrationForm1, UserRegistrationForm2, DoctorRegistrationForm,
-                    PatientRegistrationForm, NurseRegistrationForm, RelativeRegistrationForm, RecordCreationForm)
+                    PatientRegistrationForm, NurseRegistrationForm, RelativeRegistrationForm,
+                    RecordAuthenticationForm ,RecordCreationForm)
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.base_user import BaseUserManager
 
-from .decorators import doctor_login_required, patient_login_required
+from .decorators import doctor_login_required, patient_login_required, doctor_or_patient_login_required
 from .models import MedUser, Patient, Record
 # Create your views here.
 
@@ -38,7 +39,6 @@ def register_doctor(request):
     if request.method == "POST":
         user_form = UserRegistrationForm1(request.POST)
         doctor_form = DoctorRegistrationForm(request.POST)
-
 
         if user_form.is_valid() and doctor_form.is_valid():
             user = user_form.save(commit=False)
@@ -177,7 +177,7 @@ def create_record(request):
             record.allowed_users.add(MedUser.objects.get(username=request.user))
             record.save()
 
-            return redirect("/") # TODO Burada record detay sayfasına yönlendirme olacak
+            return redirect("/accounts/record/{id}".format(id=record.id))
     else:
         record_form = RecordCreationForm(request.POST)
 
@@ -191,6 +191,48 @@ def allowed_records(request):
 
 @login_required(login_url="/accounts/login")
 def get_record(request, pk):
-    record = get_object_or_404(Record,pk=pk)
+    record = get_object_or_404(Record, pk=pk)
+    user = MedUser.objects.get(username=request.user)
 
-    return render(request, "accounts/record_detail.html", {'record':record})
+    # return the record if the user have authentication
+    if record in user.allowed_users.all():
+        return render(request, "accounts/record_detail.html", {'record':record, 'user':user})
+    else:
+        return redirect('/')
+
+
+@doctor_or_patient_login_required
+def record_authenticate(request,pk):
+    record = get_object_or_404(Record, pk=pk)
+
+    if (record in request.user.allowed_users.all()) and request.method == "POST":
+        if request.user.user_type == 1:
+            auth_form = RecordAuthenticationForm(request.POST)
+
+            if auth_form.is_valid():
+                u = auth_form.cleaned_data['username']
+
+                user = MedUser.objects.get(username=u)
+
+                if user is not None and user.user_type == 3:
+                    record.allowed_users.add(user)
+                    return redirect("/accounts/record/{id}".format(id=pk))
+                else:
+                    auth_form.add_error(None, "Nurse does not exist.")
+        elif request.user.user_type == 2:
+            auth_form = RecordAuthenticationForm(request.POST)
+
+            if auth_form.is_valid():
+                u = auth_form.cleaned_data['username']
+
+                user = MedUser.objects.get(username=u)
+
+                if user is not None and (user.user_type == 1 or user.user_type == 4):
+                    record.allowed_users.add(user)
+                    return redirect("/accounts/record/{id}".format(id=pk))
+                else:
+                    auth_form.add_error(None, "Doctor or Relatives does not exist.")
+    else:
+        auth_form = RecordAuthenticationForm()
+
+    return render(request, "accounts/record_authenticate.html", {'auth_form': auth_form})

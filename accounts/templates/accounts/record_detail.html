@@ -5,4 +5,16 @@
     <p>Last Name: {{ record.last_name }}</p>
     <p>Birth Date: {{ record.birth_date|date }}</p>
     <p>Diagnostics: {{ record.diagnostics }}</p>
+
+    {% if user.user_type == 1 %}
+        <h3>Authenticate Nurse </h3>
+        <form action="/accounts/record/{{ record.id }}/authenticate">
+            <input type="submit" value="Go to Authentication" />
+        </form>
+    {% elif user.user_type == 2 %}
+        <h3>Authenticate Doctor or Relative </h3>
+        <form action="/accounts/record/{{ record.id }}/authenticate">
+            <input type="submit" value="Go to Authentication" />
+        </form>
+    {% endif %}
 {% endblock %}
