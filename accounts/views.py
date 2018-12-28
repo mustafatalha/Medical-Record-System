@@ -220,26 +220,32 @@ def record_authenticate(request,pk):
             if auth_form.is_valid():
                 u = auth_form.cleaned_data['username']
 
-                user = MedUser.objects.get(username=u) #TODO olmayan bir isim girilmesi durumu
-
-                if user is not None and user.user_type == 3:
-                    record.allowed_users.add(user)
-                    return redirect("/accounts/record/{id}".format(id=pk))
+                if not MedUser.objects.filter(username=u).exists():
+                    auth_form.add_error(None, "Username does not exist.")
                 else:
-                    auth_form.add_error(None, "Nurse does not exist.")
+                    user = MedUser.objects.get(username=u)
+
+                    if user is not None and user.user_type == 3:
+                        record.allowed_users.add(user)
+                        return redirect("/accounts/record/{id}".format(id=pk))
+                    else:
+                        auth_form.add_error(None, "Nurse does not exist.")
         elif request.user.user_type == 2:
             auth_form = RecordAuthenticationForm(request.POST)
 
             if auth_form.is_valid():
                 u = auth_form.cleaned_data['username']
 
-                user = MedUser.objects.get(username=u)
-
-                if user is not None and (user.user_type == 1 or user.user_type == 4):
-                    record.allowed_users.add(user)
-                    return redirect("/accounts/record/{id}".format(id=pk))
+                if not MedUser.objects.filter(username=u).exists():
+                    auth_form.add_error(None, "Username does not exist.")
                 else:
-                    auth_form.add_error(None, "Doctor or Relative do not exist.")
+                    user = MedUser.objects.get(username=u)
+
+                    if user is not None and (user.user_type == 1 or user.user_type == 4):
+                        record.allowed_users.add(user)
+                        return redirect("/accounts/record/{id}".format(id=pk))
+                    else:
+                        auth_form.add_error(None, "Doctor or Relative do not exist.")
     else:
         auth_form = RecordAuthenticationForm()
 
