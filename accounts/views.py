@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate
 from .forms import (UserLoginForm, UserRegistrationForm1, UserRegistrationForm2, DoctorRegistrationForm,
                     PatientRegistrationForm, NurseRegistrationForm, RelativeRegistrationForm, RecordCreationForm)
@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.base_user import BaseUserManager
 
 from .decorators import doctor_login_required, patient_login_required
-from .models import MedUser,Patient
+from .models import MedUser, Patient, Record
 # Create your views here.
 
 
@@ -184,6 +184,13 @@ def create_record(request):
     return render(request, "accounts/create_record.html", {'record_form': record_form})
 
 
-@login_required()
+@login_required(login_url="/accounts/login")
 def allowed_records(request):
     return render(request,"accounts/records.html")
+
+
+@login_required(login_url="/accounts/login")
+def get_record(request, pk):
+    record = get_object_or_404(Record,pk=pk)
+
+    return render(request, "accounts/record_detail.html", {'record':record})

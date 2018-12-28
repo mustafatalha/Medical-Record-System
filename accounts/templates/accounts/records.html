@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
+    <h2>Allowed Records</h2>
     {% for rec in user.allowed_users.all %}
-    <p>{{ rec.first_name }} {{ rec.last_name }} {{ rec.diagnostics }}</p>
-
-{% endfor %}
+    <h2><li><a href="record/{{rec.id}}/">{{ rec.id }} {{ rec.first_name }}
+        {{ rec.last_name }} {{ rec.diagnostics }} </a></li></h2>
+    {% endfor %}
 
 {% endblock %}

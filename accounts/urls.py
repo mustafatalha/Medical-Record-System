@@ -9,6 +9,7 @@ urlpatterns = [
     path('register/relative', register_relative, name= 'register_relative'),
     path('create_record', create_record, name= 'create_record'),
     path('records', allowed_records, name= 'records'),
+    path('record/<int:pk>/', get_record, name='record_detail'),
     path('logout/', logout, name= 'logout'),
     path('profile/', profile, name= 'profile'),
     path('', get_home, name = 'home'),

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Record Details</h2>
+    <p>First Name: {{ record.first_name }}</p>
+    <p>Last Name: {{ record.last_name }}</p>
+    <p>Birth Date: {{ record.birth_date|date }}</p>
+    <p>Diagnostics: {{ record.diagnostics }}</p>
+{% endblock %}
