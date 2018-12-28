@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for rec in user.allowed_users.all %}
+    <p>{{ rec.first_name }} {{ rec.last_name }} {{ rec.diagnostics }}</p>
+
+{% endfor %}
+
+{% endblock %}

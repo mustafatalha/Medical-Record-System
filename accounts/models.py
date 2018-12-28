@@ -51,7 +51,7 @@ class Record(models.Model):
     patient = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='record_patient')
     creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='records')
     diagnostics = models.CharField(max_length=256, default='unknown', null=False, blank=False)
-    allowed_users = models.ManyToManyField(MedUser,related_name='allowed_users')
+    allowed_users = models.ManyToManyField(MedUser,related_name='allowed_users') #TODO allowed records olarak değiştir
     first_name = models.CharField(max_length=256)
     last_name = models.CharField(max_length=256)
     birth_date = models.DateField(blank=True)

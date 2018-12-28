@@ -182,3 +182,8 @@ def create_record(request):
         record_form = RecordCreationForm(request.POST)
 
     return render(request, "accounts/create_record.html", {'record_form': record_form})
+
+
+@login_required()
+def allowed_records(request):
+    return render(request,"accounts/records.html")
