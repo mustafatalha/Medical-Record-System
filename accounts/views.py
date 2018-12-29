@@ -76,7 +76,9 @@ def register_patient(request):
             usrn = user.first_name[0] + user.last_name
             i=1
             while MedUser.objects.filter(username=usrn).exists():
+                usrn = user.first_name[0] + user.last_name
                 usrn = usrn + str(i)
+                i = i+1
             user.username = usrn
             pwd = BaseUserManager().make_random_password()
             user.set_password(pwd)
@@ -107,7 +109,9 @@ def register_nurse(request):
             usrn = user.first_name[0] + user.last_name
             i = 1
             while MedUser.objects.filter(username=usrn).exists():
+                usrn = user.first_name[0] + user.last_name
                 usrn = usrn + str(i)
+                i = i + 1
             user.username = usrn
             pwd = BaseUserManager().make_random_password()
             user.set_password(pwd)
@@ -138,7 +142,9 @@ def register_relative(request):
             usrn = user.first_name[0] + user.last_name
             i = 1
             while MedUser.objects.filter(username=usrn).exists():
+                usrn = user.first_name[0] + user.last_name
                 usrn = usrn + str(i)
+                i = i + 1
             user.username = usrn
             pwd = BaseUserManager().make_random_password()
             user.set_password(pwd)
