@@ -15,15 +15,13 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li><a class="navbar-brand" href="{% url 'home' %}">Home</a></li>
-            <li><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
-            <li><a class="nav-link" href="{% url 'register_doctor' %}">Register Doctor</a></li>
 
             {% if user.is_authenticated %}
                 {% if user.user_type == 1 %}
                     <li><a class="nav-link" href="{% url 'register_patient' %}">Create Patient</a></li>
                     <li><a class="nav-link" href="{% url 'register_nurse' %}">Create Nurse</a></li>
                     <li><a class="nav-link" href="{% url 'create_record' %}">Create Record</a></li>
-                {% elif user.user_type == 1 %}
+                {% elif user.user_type == 2 %}
                     <li><a class="nav-link" href="{% url 'register_relative' %}">Create Relative</a></li>
                 {% endif %}
             {% endif %}
@@ -33,6 +31,8 @@
                 <li><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
                 <li><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
             {% else %}
+                <li><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
+                <li><a class="nav-link" href="{% url 'register_doctor' %}">Register Doctor</a></li>
                 <li><a class="nav-link" href="{% url 'login' %}">Login</a></li>
             {% endif %}
     </ul>
