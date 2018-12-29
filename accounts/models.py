@@ -22,7 +22,7 @@ class Doctor(models.Model):
         return self.user.username
 
 
-class Patient(models.Model): # TODO username conflict çöz
+class Patient(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patient')
     creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='patients')
     birth_date = models.DateField(blank=True)
@@ -31,7 +31,7 @@ class Patient(models.Model): # TODO username conflict çöz
         return self.user.username
 
 
-class Nurse(models.Model): # TODO Hemşire ile doktoru bağla
+class Nurse(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='nurse')
     creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='nurses')
 
@@ -51,7 +51,7 @@ class Record(models.Model):
     patient = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='record_patient')
     creator = models.ForeignKey(MedUser, on_delete=models.CASCADE, related_name='records')
     diagnostics = models.CharField(max_length=256, default='unknown', null=False, blank=False)
-    allowed_users = models.ManyToManyField(MedUser,related_name='allowed_users') #TODO allowed records olarak değiştir
+    allowed_users = models.ManyToManyField(MedUser,related_name='allowed_users')
     first_name = models.CharField(max_length=256)
     last_name = models.CharField(max_length=256)
     birth_date = models.DateField(blank=True)

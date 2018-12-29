@@ -4,19 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Base</title>
+    <title>Medical Records</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
 </head>
 <body>
-    <a href="{% url 'admin:index' %}">ADMIN</a>
-    <a href="{% url 'register_doctor' %}">Register doctor</a>
-    <a href="{% url 'register_patient' %}">Register patient</a>
-    <a href="{% url 'register_nurse' %}">Register nurse</a>
-    <a href="{% url 'register_relative' %}">Register relative</a>
-    <a href="{% url 'create_record' %}">Create Record</a>
-    <a href="{% url 'records' %}">Records</a>
-    <a href="{% url 'login' %}">Log In</a>
-    <a href="{% url 'logout' %}">Log out</a>
-    <a href="{% url 'profile' %}">Profile</a>
-    {% block content %} {% endblock %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li><a class="navbar-brand" href="{% url 'home' %}">Home</a></li>
+            <li><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
+            <li><a class="nav-link" href="{% url 'register_doctor' %}">Register Doctor</a></li>
+
+            {% if user.is_authenticated %}
+                {% if user.user_type == 1 %}
+                    <li><a class="nav-link" href="{% url 'register_patient' %}">Create Patient</a></li>
+                    <li><a class="nav-link" href="{% url 'register_nurse' %}">Create Nurse</a></li>
+                    <li><a class="nav-link" href="{% url 'create_record' %}">Create Record</a></li>
+                {% elif user.user_type == 1 %}
+                    <li><a class="nav-link" href="{% url 'register_relative' %}">Create Relative</a></li>
+                {% endif %}
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <li><a class="nav-link" href="{% url 'records' %}">Records</a></li>
+                <li><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
+                <li><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+                <li><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+    </ul>
+  </div>
+</nav>
+{% block content %} {% endblock %}
 </body>
 </html>

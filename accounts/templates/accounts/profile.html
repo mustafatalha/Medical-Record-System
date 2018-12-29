@@ -1,20 +1,34 @@
-
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Profile</h1>
-<p>You are logged in as {{ user }} </p>
-<p>Email: {{ user.email }}</p>
-<p>type: {{ user.user_type }}</p>
+    <h1>Profile</h1>
+    <p>Hi, {{ user }} </p>
 
-{% if user.doctor %}
-<p>You are a doctor</p>
-{% endif %}
+    {% if user.doctor %}
+        <p>You are a doctor</p>
+        <p>First name: {{ user.first_name }}</p>
+        <p>Last name: {{ user.last_name }}</p>
+    {% endif %}
 
-{% if user.patient %}
-<p>You are a patient</p>
-{% endif %}
- 
- <a href="{% url 'home' %}">Back</a>
+    {% if user.patient %}
+        <p>You are a patient</p>
+        <p>First name: {{ user.first_name }}</p>
+        <p>Last name: {{ user.last_name }}</p>
+    {% endif %}
+
+    {% if user.nurse %}
+        <p>You are a nurse</p>
+        <p>First name: {{ user.first_name }}</p>
+        <p>Last name: {{ user.last_name }}</p>
+    {% endif %}
+
+    {% if user.relative %}
+        <p>You are a relative</p>
+        <p>First name: {{ user.first_name }}</p>
+        <p>Last name: {{ user.last_name }}</p>
+    {% endif %}
+
+    <p>Please contact with site administration to change your password.</p>
+    <a href="{% url 'home' %}">Back</a>
 
 {% endblock %}
